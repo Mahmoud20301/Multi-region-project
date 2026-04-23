@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prod-deployment
+  namespace: primary
 spec:
   replicas: 4
   selector:
@@ -13,8 +14,8 @@ spec:
         app: prod-pod
     spec:
       containers:
-      - name: prod-app
-        image: wordpress:latest
+      - name: wordpress
+        image: wordpress:6.5-apache
         ports:
         - containerPort: 80
 
@@ -35,32 +36,33 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: mysql-user
+              key: WORDPRESS_DB_USER
 
         - name: WORDPRESS_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: mysql-password
+              key: WORDPRESS_DB_PASSWORD
 
         readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 5
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
 
         livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: prod-service
+  namespace: primary
 spec:
   type: LoadBalancer
   selector:

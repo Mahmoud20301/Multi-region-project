@@ -6,5 +6,6 @@
 # Secrets
 secrets.tfvars
 
+secret.yaml
 # Optional
 .terraform.lock.hcl
