@@ -160,6 +160,10 @@ resource "azurerm_mysql_flexible_server" "primary" {
 
   delegated_subnet_id = azurerm_subnet.mysql_subnet_primary.id
   private_dns_zone_id  = azurerm_private_dns_zone.mysql_dns.id
+
+   depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.primary_link
+  ]
 }
 resource "time_sleep" "wait_primary" {
   depends_on      = [azurerm_mysql_flexible_server.primary]
@@ -179,8 +183,9 @@ resource "azurerm_mysql_flexible_server" "replica" {
   private_dns_zone_id = azurerm_private_dns_zone.mysql_dns.id
 
   depends_on = [
-    time_sleep.wait_primary
-  ]
+  time_sleep.wait_primary,
+  azurerm_private_dns_zone_virtual_network_link.secondary_link
+]
 }
 
 # ================= DATABASE =================

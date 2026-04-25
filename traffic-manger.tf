@@ -1,4 +1,4 @@
-# ================= TRAFFIC MANAGER PROFILE =================
+
 resource "azurerm_traffic_manager_profile" "tm" {
   name                = "tm-wordpress-mahmoud"
   resource_group_name = azurerm_resource_group.rg.name
@@ -19,21 +19,21 @@ resource "azurerm_traffic_manager_profile" "tm" {
   }
 }
 
-# ================= PRIMARY ENDPOINT =================
+
 resource "azurerm_traffic_manager_external_endpoint" "primary" {
   name                = "primary-endpoint"
   profile_id          = azurerm_traffic_manager_profile.tm.id
-  target              = "20.252.89.14"   # PRIMARY AKS EXTERNAL IP
+  target              = "172.193.154.195"   
   enabled     = true
   priority            = 1
   weight              = 1
 }
 
-# ================= SECONDARY ENDPOINT =================
+
 resource "azurerm_traffic_manager_external_endpoint" "secondary" {
   name                = "secondary-endpoint"
   profile_id          = azurerm_traffic_manager_profile.tm.id
-  target              = "4.239.100.97"   # SECONDARY AKS EXTERNAL IP
+  target              = "20.200.48.130"   #
   enabled     = true
   priority            = 2
   weight              = 1
