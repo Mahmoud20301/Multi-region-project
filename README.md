@@ -20,40 +20,8 @@ A global DNS router, **Azure Traffic Manager**, operates at the apex of the arch
 
 ## Architecture Diagram
 
-```mermaid
-graph TD
-    User([Users / Clients]) -->|HTTP/HTTPS priority| TM[Azure Traffic Manager]
-    
-    subgraph Primary_Region ["Primary Region (Active)"]
-        AKS_P[Primary AKS Cluster]
-        DB_P[(Primary MySQL Flexible Server)]
-        AKS_P -->|Read/Write| DB_P
-    end
+<img width="1593" height="908" alt="architecture-diagram(6)" src="https://github.com/user-attachments/assets/6d3fa3dd-a652-4299-ac51-17e745b0e43e" />
 
-    subgraph Secondary_Region ["Secondary Region (Standby)"]
-        AKS_S[Secondary AKS Cluster]
-        DB_S[(Secondary MySQL Read Replica)]
-        AKS_S -.->|Read/Write after Failover| DB_S
-    end
-
-    TM -->|Priority 1| AKS_P
-    TM -.->|Priority 2 Failover| AKS_S
-
-    DB_P -->|Asynchronous Replication| DB_S
-
-    subgraph Automation_Monitoring ["Failover Automation Pipeline"]
-        Monitor[Azure Monitor / Log Analytics]
-        AG[Action Group / Webhook]
-        Runbook[Azure Automation Runbook]
-    end
-
-    TM -->|Metrics / Alerts| Monitor
-    Monitor --> AG
-    AG -->|Triggers| Runbook
-
-    Runbook -.->|1. Promote to Master| DB_S
-    Runbook -.->|2. Scale replicas out| AKS_S
-```
 
 ---
 
